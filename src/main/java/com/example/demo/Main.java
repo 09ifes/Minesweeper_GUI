@@ -1,7 +1,6 @@
 package com.example.demo;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -13,17 +12,15 @@ import java.util.Objects;
 
 
 public class Main extends Application{
-    static Data data = new Data();
 
     @Override
    public void start(Stage stage) throws IOException{
-        int rows = 10;
-        int columns = 10;
+        int rows = 30;
+        int columns = 30;
         stage.setTitle("Minesweeper");
         Pane layout = new Pane();
         Scene scene = new Scene(layout, 500, 500);
         Grid grid = new Grid(columns, rows);
-
 
 
         for (int row = 0; row < grid.height; row++){
@@ -32,7 +29,6 @@ public class Main extends Application{
                 cell.setMinSize(30, 32);
                 cell.setText(cell.appearance);
                 layout.getChildren().add(cell);
-
                 cell.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
@@ -41,7 +37,19 @@ public class Main extends Application{
                             if (cell.isClickable) {
                                 if (cell.isMine){
                                     cell.appearance = "✳";
-                                    //grid.determineCell((cell.x / 35), (cell.y / 35));
+                                    for (int row = 0; row < grid.height; row++){
+                                        for (int column = 0; column < grid.width; column++){
+                                            Cells cell = grid.cells[row][column].get(0);
+                                            cell.isClickable = false;
+                                            cell.state = "opened";
+                                            if (cell.isMine) {
+                                                cell.appearance = "✳";
+                                                cell.setText(cell.appearance);
+                                            }
+                                        }
+                                    }
+                                    grid.showMines();
+                                    cell.appearance = "✳";
                                     // reveal all mines
                                 }
                                 else if (cell.adjacentMinesCount > 0){
@@ -51,16 +59,18 @@ public class Main extends Application{
                                 else if (cell.adjacentMinesCount == 0){
                                     cell.appearance = "" + cell.adjacentMinesCount;
                                     grid.adjacentChecker((cell.x / 35), (cell.y / 35));
-
-
-                                   // grid.blankCell((cell.x / 35), (cell.y / 35));
+                                    for (int row = 0; row < grid.height; row++) {
+                                        for (int column = 0; column < grid.width; column++) {
+                                            Cells cell = grid.cells[row][column].get(0);
+                                            if (cell.isChecked) {
+                                                cell.appearance = "" + cell.adjacentMinesCount;
+                                                cell.setText(cell.appearance);
+                                            }
+                                        }
+                                    }
                                 }
-
-
                                 cell.setText(cell.appearance);
-                               // grid.determineCell((cell.x / 35), (cell.y / 35) );
                             }
-
                         }
                         else { // right click
                             if (Objects.equals(cell.state, "unopened")){
@@ -74,21 +84,12 @@ public class Main extends Application{
                                 grid.placeFlag((cell.x / 35), (cell.y / 35));    // divide by 35 to make compatible with console coords
                             }
                         }
-
-
                     }
                     });
-
-
-
-
             }
         }
-
-
         stage.setScene(scene);
         stage.show();
-
     }
 
 

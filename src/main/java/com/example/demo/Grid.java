@@ -48,7 +48,7 @@ public class Grid {
 
                 this.cells[row][column] = new ArrayList<>();
                 this.cells[row][column].add(cell);            // adds cell to 2d arraylist
-                cell = this.cells[row][column].get(0);        // retrieves cell from arraylist
+                //cell = this.cells[row][column].get(0);        // retrieves cell from arraylist
                // System.out.print(cell.appearance);
                 gridX += 35;
             }
@@ -248,7 +248,7 @@ public class Grid {
                 }
             }
         }
-        this.gridBuilder();
+        //this.gridBuilder();
     }
 
     public void setAdjacents() {
