@@ -1,26 +1,26 @@
 package com.example.demo;
 
+import javafx.scene.Node;
+
 import java.util.Scanner;
 
 public class Game {
+    Data data;
 
-    public Game(int columns, int rows) {
+    public Game(Data data) {
+        this.data = data;
 
-        boolean dimensions = true;
-
-
-        //Grid grid = new Grid(columns, rows);
-
-       // while(grid.game){
-            // set initial values to account for exceptions, to prevent
-
-
-            //grid.receiveInputs(x, y, flag);
-
-
-        //}
+        this.updateUI();
 
 
 
     }
+
+    public void updateUI(){
+        Node cell = this.data.layout.getChildren().get(1);
+        this.data.stage.show();
+
+
+    }
+
 }

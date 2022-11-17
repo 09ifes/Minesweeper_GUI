@@ -13,8 +13,8 @@ public class Grid {
 
     // creates initial grid, all cells set to 'unopened'
     public Grid(int width, int height){
-        this.width = width / 25;
-        this.height = height / 25;
+        this.width = width;
+        this.height = height;
         this.cells = new ArrayList[height][width];
 
         // sets spacing for grid numbering
