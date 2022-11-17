@@ -9,10 +9,12 @@ import javafx.scene.layout.Pane;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import java.io.IOException;
+import java.util.Objects;
 
 
 public class Main extends Application{
     static Data data = new Data();
+
     @Override
    public void start(Stage stage) throws IOException{
         int rows = 10;
@@ -25,28 +27,61 @@ public class Main extends Application{
 
 
         for (int row = 0; row < grid.height; row++){
-            int n = 0;
             for (int column = 0; column < grid.width; column++){
-                n++;
                 Cells cell = grid.cells[row][column].get(0);
-                cell.setMinSize(22, 22);
+                cell.setMinSize(30, 32);
                 cell.setText(cell.appearance);
-                cell.setOnAction(value ->  {
-                    cell.setText("1");
-                });
+                layout.getChildren().add(cell);
+
                 cell.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
                         MouseButton button = mouseEvent.getButton();
                         if (button == MouseButton.PRIMARY) {
-                            cell.setText("1");
+                            if (cell.isClickable) {
+                                if (cell.isMine){
+                                    cell.appearance = "✳";
+                                    //grid.determineCell((cell.x / 35), (cell.y / 35));
+                                    // reveal all mines
+                                }
+                                else if (cell.adjacentMinesCount > 0){
+                                    cell.appearance = "" + cell.adjacentMinesCount;
+                                    grid.numberedCell((cell.x / 35), (cell.y / 35));
+                                }
+                                else if (cell.adjacentMinesCount == 0){
+                                    cell.appearance = "" + cell.adjacentMinesCount;
+                                    grid.adjacentChecker((cell.x / 35), (cell.y / 35));
+
+
+                                   // grid.blankCell((cell.x / 35), (cell.y / 35));
+                                }
+
+
+                                cell.setText(cell.appearance);
+                               // grid.determineCell((cell.x / 35), (cell.y / 35) );
+                            }
+
                         }
-                        else {
-                            cell.setText("2");
+                        else { // right click
+                            if (Objects.equals(cell.state, "unopened")){
+                                cell.appearance = "\uD83D\uDEA9";
+                                cell.setText(cell.appearance);
+                                grid.placeFlag((cell.x / 35), (cell.y / 35));    // divide by 35 to make compatible with console coords
+                            }
+                            else if (Objects.equals(cell.state, "flagged")) {
+                                cell.appearance = " ";
+                                cell.setText(cell.appearance);
+                                grid.placeFlag((cell.x / 35), (cell.y / 35));    // divide by 35 to make compatible with console coords
+                            }
                         }
+
+
                     }
-                });
-                layout.getChildren().add(cell);
+                    });
+
+
+
+
             }
         }
 
@@ -59,13 +94,6 @@ public class Main extends Application{
 
     public static void main(String[] args) {
         launch();
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                // do your GUI stuff here
-            }
-        });
-
 
 
 

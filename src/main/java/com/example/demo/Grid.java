@@ -50,14 +50,14 @@ public class Grid {
                 this.cells[row][column].add(cell);            // adds cell to 2d arraylist
                 cell = this.cells[row][column].get(0);        // retrieves cell from arraylist
                // System.out.print(cell.appearance);
-                gridX += 25;
+                gridX += 35;
             }
             //System.out.print("\n");
-            gridY += 25;
+            gridY += 35;
         }
         this.totalCells = this.width * this.height;
-       // this.setMines();
-       // this.setAdjacents();
+        this.setMines();
+        this.setAdjacents();
     }
 
     public void gridBuilder(){
@@ -200,21 +200,21 @@ public class Grid {
     public void placeFlag(int coord_x, int coord_y){
         Cells cell = this.cells[coord_y][coord_x].get(0);
         if (Objects.equals(cell.state, "opened")){
-            System.out.println("Cell has already been opened, cannot place flag");
+           // System.out.println("Cell has already been opened, cannot place flag");
         }
         else if (Objects.equals(cell.state, "unopened")){
             cell.state = "flagged";
             cell.isClickable = false;
             cell.isFlag = true;
             cell.appearance = "F  ";
-            this.gridBuilder();
+            //this.gridBuilder();
         }
         else if (Objects.equals(cell.state, "flagged")){
             cell.state = "unopened";
             cell.isClickable = true;
             cell.isFlag = false;
             cell.appearance = ".  ";
-            this.gridBuilder();
+            //this.gridBuilder();
         }
     }
 
@@ -223,7 +223,7 @@ public class Grid {
         Cells cell = this.cells[coord_y][coord_x].get(0);
         cell.state = "opened";
         cell.isClickable = false;
-        cell.appearance = "0  ";
+        cell.appearance = cell.adjacentMinesCount + "  ";
         this.adjacentChecker(coord_x, coord_y);
         this.gridBuilder();
     }
