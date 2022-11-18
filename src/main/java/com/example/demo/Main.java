@@ -1,5 +1,4 @@
 package com.example.demo;
-
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -13,16 +12,13 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
-
 
 public class Main extends Application{
-
     @Override
    public void start(Stage stage) throws IOException{
         stage.setTitle("Minesweeper");
 
-
+        // Code below creates and places components on initial screen/scene
         Label labelRows = new Label("Please enter the number of\n rows (1 - 20)");
         labelRows.setLayoutX(5);
         labelRows.setLayoutY(100);
@@ -38,7 +34,6 @@ public class Main extends Application{
         enterColumns.setLayoutX(180);
         enterColumns.setLayoutY(150);
 
-
         Button enter = new Button("Enter");
         enter.setLayoutX(180);
         enter.setLayoutY(190);
@@ -53,18 +48,17 @@ public class Main extends Application{
 
         // event handler for validating input in the rows text box
         enterRows.setOnKeyReleased(e -> {
-            int t1 = -1;
+            int t1 = -1;           // defaults to invalid value, to account for possible exceptions
             int t2 = -1;
             try{
             t1 = Integer.parseInt( enterRows.getText());
             t2 = Integer.parseInt( enterColumns.getText());
             }
             catch (Exception exception){
-                enter.setDisable(true);
+                enter.setDisable(true);       // disables button
             }
-
             if (t1 > 0 && t1 <= 20 && t2 > 0 && t2 <= 20 ){
-                enter.setDisable(false);
+                enter.setDisable(false);      // satisfies conditions, button enabled
             }
             else {
                 enter.setDisable(true);
@@ -72,18 +66,18 @@ public class Main extends Application{
     });
         // event handler for validating input in the columns text box
         enterColumns.setOnKeyReleased(e -> {
-                int t1 = -1;
+                int t1 = -1;          // defaults to invalid value, to account for possible exceptions
                 int t2 = -1;
                 try{
                     t1 = Integer.parseInt( enterRows.getText());
                     t2 = Integer.parseInt( enterColumns.getText());
                 }
                 catch (Exception exception){
-                    enter.setDisable(true);
+                    enter.setDisable(true);        // disables button
                 }
 
                 if (t1 > 0 && t1 <= 20 && t2 > 0 && t2 <= 20 ){
-                    enter.setDisable(false);
+                    enter.setDisable(false);           // satisfies conditions, button enabled
                 }
                 else {
                     enter.setDisable(true);
@@ -96,10 +90,12 @@ public class Main extends Application{
             public void handle(ActionEvent event) {
                 int rows = Integer.parseInt(enterRows.getText());
                 int columns = Integer.parseInt(enterColumns.getText());
+
                 Pane layout = new Pane();
-                Scene scene = new Scene(layout, 500, 500);
+                Scene scene = new Scene(layout, 700, 500);
                 Grid grid = new Grid(columns, rows);
 
+                // all cells in 2d array gets placed on screen
                 for (int row = 0; row < grid.height; row++){
                     for (int column = 0; column < grid.width; column++){
                         Cells cell = grid.cells[row][column].get(0);
@@ -126,6 +122,8 @@ public class Main extends Application{
                                             }
                                             grid.showMines();
                                             cell.appearance = "✳";
+                                            System.out.println("You lose");
+                                            grid.lose = true;
                                             // reveal all mines
                                         }
                                         else if (cell.adjacentMinesCount > 0){
@@ -145,8 +143,25 @@ public class Main extends Application{
                                                 }
                                             }
                                         }
-                                        cell.setText(cell.appearance);
+
+                                        if (!grid.lose) {
+                                            cell.setText(cell.appearance);
+                                            grid.determineCell((cell.x / 35), (cell.y / 35));
+                                            if (grid.totalFound == (grid.totalCells - grid.mineNumber)) {
+                                                System.out.println("You win");
+                                                // sets all cells to non-clickable after losing
+                                                for (int row = 0; row < grid.height; row++){
+                                                    for (int column = 0; column < grid.width; column++){
+                                                        Cells cell = grid.cells[row][column].get(0);
+                                                        cell.isClickable = false;
+                                                        cell.state = "opened";
+                                                    }
+                                                }
+                                            }
+                                        }
+
                                     }
+
                                 }
                                 else { // right click
                                     //if unopened, place flag
@@ -172,17 +187,10 @@ public class Main extends Application{
 
         });
 
-
-
-
-
-
-
-        Scene scene1 = new Scene(hbox, 500, 500);
+        Scene scene1 = new Scene(hbox, 700, 500);
         stage.setScene(scene1);
         stage.show();
     }
-
 
     public static void main(String[] args) {
         launch();

@@ -7,8 +7,10 @@ public class Grid {
     int width;
     int height;
     boolean game = true;
+    boolean lose = false;
     int totalCells;
     int mineNumber;
+    int totalFound;
     ArrayList<Cells>[][] cells;
 
     // creates initial grid, all cells set to 'unopened'
@@ -61,9 +63,9 @@ public class Grid {
     }
 
     public void gridBuilder(){
-        int totalFound = 0;
-        System.out.print("\n");
-        System.out.print("    ");             // for spacings
+        this.totalFound = 0;
+       // System.out.print("\n");
+        //System.out.print("    ");             // for spacings
         for (int i = 0; i < this.width; i++){
             if (i > 9){
                 //System.out.print(i + " ");
@@ -85,12 +87,12 @@ public class Grid {
                 Cells cell = this.cells[row][column].get(0);
                 //System.out.print(cell.appearance);
                 if (Objects.equals(cell.state, "opened") && !cell.isMine){
-                    totalFound += 1;
+                    this.totalFound += 1;
                 }
             }
             //System.out.print("\n");
         }
-        if (totalFound == (this.totalCells - this.mineNumber)){  // when total non-mine opened = total cells - mines
+        if (this.totalFound == (this.totalCells - this.mineNumber)){  // when total non-mine opened = total cells - mines
             this.game = false;
             //System.out.println("You win");
         }
@@ -149,7 +151,8 @@ public class Grid {
         if (cell.isMine){
             this.showMines();
             this.game = false;
-            System.out.println("Game over, you lose!");
+            this.lose = true;
+            //System.out.println("Game over, you lose!");
         }
         else if (cell.adjacentMinesCount > 0){
             this.numberedCell(x,y);
@@ -207,14 +210,14 @@ public class Grid {
             cell.isClickable = false;
             cell.isFlag = true;
             cell.appearance = "F  ";
-            //this.gridBuilder();
+            this.gridBuilder();
         }
         else if (Objects.equals(cell.state, "flagged")){
             cell.state = "unopened";
             cell.isClickable = true;
             cell.isFlag = false;
             cell.appearance = ".  ";
-            //this.gridBuilder();
+            this.gridBuilder();
         }
     }
 
@@ -248,7 +251,7 @@ public class Grid {
                 }
             }
         }
-        //this.gridBuilder();
+        this.gridBuilder();
     }
 
     public void setAdjacents() {
